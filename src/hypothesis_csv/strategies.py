@@ -4,6 +4,8 @@ from hypothesis.errors import InvalidArgument
 from meza.convert import records2csv
 import string
 import functools
+from multimethod import overload, isa
+import collections
 
 
 def is_seq(x):
@@ -36,26 +38,31 @@ def get_columns(draw, columns_param):
     return columns
 
 
+@overload
 def get_lines_num(draw, lines_param):
-    if lines_param is None:
-        return draw(integers(min_value=1, max_value=100))
-    elif isinstance(lines_param, int):
-        return lines_param
-    else:
-        raise InvalidArgument("lines param must be an integer")
+    raise InvalidArgument("Lines param must be an integer or None")
+
+
+@overload
+def get_lines_num(draw, lines_param: lambda x: x is None):
+    return draw(integers(min_value=1, max_value=100))
+
+
+@overload
+def get_lines_num(draw, lines_param: isa(int)):
+    return lines_param
 
 
 @composite
 def data_rows(draw, lines=None, columns=None):
-    columns = get_columns(draw, columns)
     lines_num = get_lines_num(draw, lines)
+    columns = get_columns(draw,columns)
     rows = [tuple(draw(column) for column in columns) for _ in range(lines_num)]
-
     return rows
 
 
 @composite
-def csv(draw, header=None, *args, **kwargs):
+def csv(draw, header=None, lines=None, columns=None):
     if not header:
         final_header_len = draw(integers(min_value=1, max_value=10))
         header = []
@@ -65,6 +72,6 @@ def csv(draw, header=None, *args, **kwargs):
             if new_column not in header:
                 header.append(new_column)
 
-    rows = draw(data_rows(columns=len(header), *args, **kwargs))
+    rows = draw(data_rows(lines=lines, columns=len(header)))
     data = [dict(zip(header, d)) for d in rows]
     return records2csv(data).getvalue()
