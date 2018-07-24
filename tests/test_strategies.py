@@ -1,9 +1,11 @@
 from hypothesis_csv.strategies import data_rows, csv
 from hypothesis import strategies as st
 from hypothesis import settings, given, reproduce_failure
+from hypothesis.errors import InvalidArgument
 from meza.io import read_csv
 from io import StringIO
 import string
+import pytest
 
 
 def csv2records(string):
@@ -80,3 +82,19 @@ def test_csv_lines_fixed(data):
     csv_string = data.draw(csv(lines=lines))
     records = csv2records(csv_string)
     assert len(records) == lines
+
+
+@pytest.mark.parametrize("kwargs", [{"columns": "xyz"}, {"lines": "xyz"}])
+@given(data=st.data())
+def test_csv_parameter_fail(data, kwargs):
+    with pytest.raises(InvalidArgument):
+        data.draw(csv(**kwargs))
+
+@pytest.mark.parametrize("kwargs", [{"header": 5}, {"columns": 3}])
+@given(data=st.data())
+def test_csv_header_int(data, kwargs):
+
+    csv_string = data.draw(csv(**kwargs))
+    records = csv2records(csv_string)
+    extracted_header = list(records[0].keys())
+    assert len(extracted_header) == list(kwargs.values())[0]
