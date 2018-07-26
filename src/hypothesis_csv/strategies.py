@@ -20,6 +20,12 @@ def is_seq(x):
     return isa(collections.Iterable)(x) and not isa(str)(x)
 
 
+def draw_header(draw, header_len):
+    return draw(lists(text(min_size=1,
+                           alphabet=string.ascii_lowercase + string.ascii_uppercase + string.digits),
+                      min_size=header_len, max_size=header_len, unique=True))
+
+
 @overload
 def get_columns(draw, columns):
     raise InvalidArgument("Columns parameter must either be an integer or a list of strategies")
@@ -70,7 +76,7 @@ def get_header_and_column_types(draw, header, columns):
 
 
 @overload
-def get_header_and_column_types(draw, header: lambda x: is_seq,
+def get_header_and_column_types(draw, header: is_seq,
                                 columns: is_none):
     return header, len(header)
 
@@ -83,12 +89,9 @@ def get_header_and_column_types(draw, header: is_none, columns: is_none):
 
 @overload
 def get_header_and_column_types(draw, header: isa(int), columns: isa(int)):
-    final_header_len = header
     if header == columns:
 
-        header_fields = draw(lists(text(min_size=1,
-                                        alphabet=string.ascii_lowercase + string.ascii_uppercase + string.digits),
-                                   min_size=final_header_len, max_size=final_header_len, unique=True))
+        header_fields = draw_header(draw, header)
 
         return header_fields, len(header_fields)
     else:
@@ -107,7 +110,7 @@ def get_header_and_column_types(draw, header: isa(int), columns: is_none):
 
 @overload
 def get_header_and_column_types(draw, header: is_none, columns: is_seq):
-    pass
+    return draw_header(draw, len(columns)), columns
 
 
 @composite

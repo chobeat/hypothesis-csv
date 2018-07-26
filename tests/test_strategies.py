@@ -1,11 +1,14 @@
-from hypothesis_csv.strategies import data_rows, csv
+import string
+from io import StringIO
+
+import pytest
+from hypothesis import settings, given
 from hypothesis import strategies as st
-from hypothesis import settings, given, reproduce_failure
 from hypothesis.errors import InvalidArgument
 from meza.io import read_csv
-from io import StringIO
-import string
-import pytest
+from meza.process import detect_types
+
+from hypothesis_csv.strategies import data_rows, csv
 
 
 def csv2records(string):
@@ -90,11 +93,25 @@ def test_csv_parameter_fail(data, kwargs):
     with pytest.raises(InvalidArgument):
         data.draw(csv(**kwargs))
 
+
 @pytest.mark.parametrize("kwargs", [{"header": 5}, {"columns": 3}])
 @given(data=st.data())
 def test_csv_header_int(data, kwargs):
-
     csv_string = data.draw(csv(**kwargs))
     records = csv2records(csv_string)
     extracted_header = list(records[0].keys())
     assert len(extracted_header) == list(kwargs.values())[0]
+
+
+@given(data=st.data())
+def test_csv_columns_seq(data):
+    columns = [
+        st.text(min_size=1, max_size=100, alphabet=string.ascii_lowercase + string.ascii_uppercase + string.digits),
+        st.integers(), st.floats(min_value=1.2, max_value=100.12)]
+
+    csv_string = data.draw(csv(columns=columns, lines=20))
+    records = csv2records(csv_string)
+    detected_types = detect_types(records)[1]
+    types = list(map(lambda x: x["type"],detected_types["types"]))
+
+    assert types == ["text","int","float"]
