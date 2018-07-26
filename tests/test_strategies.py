@@ -102,7 +102,7 @@ def test_csv_header_int(data, kwargs):
     extracted_header = list(records[0].keys())
     assert len(extracted_header) == list(kwargs.values())[0]
 
-
+@settings(use_coverage=False)
 @given(data=st.data())
 def test_csv_columns_seq(data):
     columns = [
@@ -112,6 +112,23 @@ def test_csv_columns_seq(data):
     csv_string = data.draw(csv(columns=columns, lines=20))
     records = csv2records(csv_string)
     detected_types = detect_types(records)[1]
-    types = list(map(lambda x: x["type"],detected_types["types"]))
+    types = list(map(lambda x: x["type"], detected_types["types"]))
 
-    assert types == ["text","int","float"]
+    assert types == ["text", "int", "float"]
+
+@settings(use_coverage=False)
+@given(data=st.data())
+def test_csv_columns_and_header_seq(data):
+    columns = [
+        st.text(min_size=1, max_size=100, alphabet=string.ascii_lowercase + string.ascii_uppercase + string.digits),
+        st.integers(), st.floats(min_value=1.2, max_value=100.12)]
+    header = ["x", "y", "z"]
+    csv_string = data.draw(csv(header=header, columns=columns, lines=10))
+    records = csv2records(csv_string)
+    detected_types = detect_types(records)[1]
+    types = list(map(lambda x: x["type"], detected_types["types"]))
+
+    assert types == ["text", "int", "float"]
+
+    extracted_header = list(records[0].keys())
+    assert extracted_header == header

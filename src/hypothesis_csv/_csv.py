@@ -1,6 +1,4 @@
-import string
-
-from hypothesis.strategies import text, lists
+from hypothesis.strategies import lists
 from meza.convert import records2csv
 
 from hypothesis_csv._data_rows import *
@@ -13,10 +11,17 @@ def draw_header(draw, header_len):
                       min_size=header_len, max_size=header_len, unique=True))
 
 
-
 @overload
 def get_header_and_column_types(draw, header, columns):
     raise InvalidArgument("Header or column are of invalid type")
+
+
+@overload
+def get_header_and_column_types(draw, header: is_seq, columns: is_seq):
+    if len(header) == len(columns):
+        return header, columns
+    else:
+        raise InvalidArgument("Header and columns must be of the same size")
 
 
 @overload
