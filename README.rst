@@ -12,12 +12,18 @@ Description
 ===========
 
 `hypothesis-csv` is designed with two main use cases in mind:
-    -test software that accepts a wide spectrum of CSV formats and doesn't make
-assumptions on the content
-    - test software that accepts very specific CSV formats and makes assumption on the content, types and header fields.
+
+* test software that accepts a wide spectrum of CSV formats and doesn't make assumptions on the content
+* test software that accepts very specific CSV formats and makes assumption on the content, types and header fields.
+
+It provides two strategies `data_rows` and `csv` to pursue this goal, both contained in the `strategies` module.
+Please refer to their documentation and the examples for more details.
 
 Examples
 ========
+
+Generate arbitrary, non-empty CSV
+---------------------------------
 
 .. code-block:: python
     :name: Generate arbitrary, non-empty CSV
@@ -28,7 +34,8 @@ Examples
         parsed_csv=my_csv_parser(csv)
         assert ...
 
-
+Generate CSV of a given size (5 columns x 20 rows)
+--------------------------------------------------
 
 .. code-block:: python
     :name: Generate CSV of a given size (5 columns x 20 rows)
@@ -42,6 +49,8 @@ Examples
 
 
 
+Generate CSV with a header
+--------------------------
 .. code-block:: python
     :name: Generate CSV with a header
 
@@ -51,6 +60,9 @@ Examples
         parsed_csv=my_csv_parser(csv)
         assert parsed_csv.num_columns == 3
 
+
+Generate CSV with columns of a given type
+-----------------------------------------
 
 .. code-block:: python
     :name: Generate CSV with columns of a given type
