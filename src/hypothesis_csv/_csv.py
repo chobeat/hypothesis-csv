@@ -67,7 +67,7 @@ def csv(draw, header=None, columns=None,lines=None):
     """
     Strategy to produce a CSV string. Uses `data_rows` strategy to generate the values. Refer to the `data_rows`
     strategy for more details about the `columns` and `lines` parameter.
-    
+
     :param draw:
     :param header: if a list of strings, these will be used as the header for each column, according to their position.
     If an int, this parameter will define the number of columns to be used. If not provided, the number of columns will
