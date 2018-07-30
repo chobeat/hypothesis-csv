@@ -50,6 +50,18 @@ def get_lines_num(draw, lines_param: isa(int)):
 
 @composite
 def data_rows(draw, lines=None, columns=None):
+    """
+    Strategy to produce a list of data tuples
+
+    :param draw:
+    :param lines: number of data tuples to be produced. If not specified, it will be drawn randomly
+    in a range between 1 and 100
+    :param columns: int or List. If an int is provided, it will define the size of the data tuple.
+    Its data types will be drawn randomly.
+    If a List of strategies is provided, the elements for each tuple will be drawn from these strategies. They will
+    be returned in the same order of the list here provided.
+    :return: a list of data tuples
+    """
     lines_num = get_lines_num(draw, lines)
     columns = get_columns(draw, columns)
     rows = [tuple(draw(column) for column in columns) for _ in range(lines_num)]
