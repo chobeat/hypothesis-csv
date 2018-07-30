@@ -28,6 +28,8 @@ Examples
             parsed_csv=my_csv_parser(csv)
             assert ...
 
+
+
 .. code-block:: python
     :name: Generate CSV of a given size (5 columns x 20 rows)
 
@@ -38,16 +40,21 @@ Examples
                 assert parsed_csv.num_columns == 5
                 assert parsed_csv.num_rows == 20
 
+
+
 .. code-block:: python
     :name: Generate CSV with a header
+
                 from hypothesis_csv.strategies import csv
                 @given(csv=csv(header=["timestamp","val_1","val_2"]))
                 def test_my_csv_parse(csv):
                     parsed_csv=my_csv_parser(csv)
                     assert parsed_csv.num_columns == 3
 
+
 .. code-block:: python
     :name: Generate CSV with columns of a given type
+
                     from hypothesis_csv.strategies import csv
                     @given(csv=csv(columns=[text(),int(),float()]))
                     def test_my_csv_parse(csv):
