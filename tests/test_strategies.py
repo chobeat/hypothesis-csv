@@ -11,8 +11,8 @@ from meza.process import detect_types
 from hypothesis_csv.strategies import data_rows, csv
 
 
-def csv2records(string):
-    return list(read_csv(StringIO(string)))
+def csv2records(string, has_header=True):
+    return list(read_csv(StringIO(string), has_header=has_header))
 
 
 @settings(use_coverage=False)
@@ -83,7 +83,7 @@ def test_csv_header_property(data, header):
 def test_csv_lines_fixed(data):
     lines = 10
     csv_string = data.draw(csv(lines=lines))
-    records = csv2records(csv_string)
+    records = csv2records(csv_string, has_header=False)
     assert len(records) == lines
 
 
@@ -98,9 +98,10 @@ def test_csv_parameter_fail(data, kwargs):
 @given(data=st.data())
 def test_csv_header_int(data, kwargs):
     csv_string = data.draw(csv(**kwargs))
-    records = csv2records(csv_string)
+    records = csv2records(csv_string, has_header="header" in kwargs)
     extracted_header = list(records[0].keys())
     assert len(extracted_header) == list(kwargs.values())[0]
+
 
 @settings(use_coverage=False)
 @given(data=st.data())
@@ -110,11 +111,12 @@ def test_csv_columns_seq(data):
         st.integers(), st.floats(min_value=1.2, max_value=100.12)]
 
     csv_string = data.draw(csv(columns=columns, lines=20))
-    records = csv2records(csv_string)
+    records = csv2records(csv_string, has_header=False)
     detected_types = detect_types(records)[1]
     types = list(map(lambda x: x["type"], detected_types["types"]))
-
+    assert len(records) == 20
     assert types == ["text", "int", "float"]
+
 
 @settings(use_coverage=False)
 @given(data=st.data())
