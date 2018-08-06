@@ -74,10 +74,25 @@ Generate CSV with columns of a given type
         assert parsed_csv.num_columns == 3
 
 
+Generate CSV with a given dialect
+---------------------------------
 
+.. code-block:: python
+    :name: Generate CSV in a given dialect
 
+    from hypothesis_csv.strategies import csv
+    @given(csv=csv(columns=[text(),int(),float()], dialect="excel-tab"))
+    def test_my_csv_parse(csv):
+        ...
 
-TODO and WIP
-============
+Generate CSV with drawns dialects
+---------------------------------
 
-Support multiple dialects (using meza writer)
+.. code-block:: python
+    :name: Generate CSV in a given dialect
+
+    from hypothesis_csv.strategies import csv
+    @given(csv=csv(columns=[text(),int(),float()], dialect=None))
+    def test_my_csv_parse(csv):
+        ...
+
