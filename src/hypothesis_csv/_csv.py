@@ -1,8 +1,21 @@
+from csv import DictWriter
+from io import StringIO
+
 from hypothesis.strategies import lists
-from meza.convert import records2csv
 
 from hypothesis_csv._data_rows import *
 from hypothesis_csv.type_utils import *
+
+
+def _records_to_csv(data, dialect="excel", has_header=True):
+    f = StringIO()
+    w = DictWriter(f, dialect=dialect, fieldnames=data[0].keys())
+    if has_header:
+        w.writeheader()
+    for row in data:
+        w.writerow(row)
+
+    return f.getvalue()
 
 
 def draw_header(draw, header_len):
@@ -84,4 +97,4 @@ def csv(draw, header=None, columns=None, lines=None):
 
     data = [dict(zip(header, d)) for d in rows]
 
-    return records2csv(data, skip_header=header_param is None).getvalue()
+    return _records_to_csv(data, has_header=header_param is not None)
