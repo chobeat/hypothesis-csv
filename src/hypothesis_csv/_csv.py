@@ -1,4 +1,4 @@
-from csv import DictWriter
+from csv import DictWriter, list_dialects
 from io import StringIO
 
 from hypothesis.strategies import lists
@@ -7,7 +7,7 @@ from hypothesis_csv._data_rows import *
 from hypothesis_csv.type_utils import *
 
 
-def _records_to_csv(data, dialect="excel", has_header=True):
+def _records_to_csv(data, dialect, has_header=True):
     f = StringIO()
     w = DictWriter(f, dialect=dialect, fieldnames=data[0].keys())
     if has_header:
@@ -22,6 +22,10 @@ def draw_header(draw, header_len):
     return draw(lists(text(min_size=1,
                            alphabet=string.ascii_lowercase + string.ascii_uppercase + string.digits),
                       min_size=header_len, max_size=header_len, unique=True))
+
+
+def draw_dialect(draw):
+    return draw(sampled_from(list_dialects()))
 
 
 @overload
@@ -76,7 +80,7 @@ def _get_header_and_column_types(draw, header: is_none, columns: is_seq):
 
 
 @composite
-def csv(draw, header=None, columns=None, lines=None):
+def csv(draw, header=None, columns=None, lines=None, dialect="excel"):
     """
     Strategy to produce a CSV string. Uses `data_rows` strategy to generate the values. Refer to the `data_rows`
     strategy for more details about the `columns` and `lines` parameter.
@@ -89,12 +93,16 @@ def csv(draw, header=None, columns=None, lines=None):
     If an int, this parameter will define the number of columns to be used. If not provided the number of columns will
     be drawn randomly or the `header` param will be used.
     :param lines: number of rows in the CSV.
+    :param dialect: specify the CSV dialect to use. Based on the dialects available in the standard
+    python library's `csv'. Default is "excel". If set to None, the dialect is randomly drawn from all the available
+    dialects.
     :return: a string in CSV format
     """
     header_param, columns = _get_header_and_column_types(draw, header, columns)
     rows = list(draw(data_rows(lines=lines, columns=columns)))
-    header = header_param or ["col_{}".format(i) for i in range(len(rows[0]))]  # placeholder header for meza records
+    dialect = dialect or draw_dialect(draw)
+    header = header_param or ["col_{}".format(i) for i in range(len(rows[0]))]  # placeholder header for DictWriter
 
     data = [dict(zip(header, d)) for d in rows]
 
-    return _records_to_csv(data, has_header=header_param is not None)
+    return _records_to_csv(data, has_header=header_param is not None, dialect=dialect)

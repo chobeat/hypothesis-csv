@@ -11,8 +11,8 @@ from meza.process import detect_types
 from hypothesis_csv.strategies import data_rows, csv
 
 
-def csv2records(string, has_header=True):
-    return list(read_csv(StringIO(string), has_header=has_header))
+def csv2records(string, has_header=True, delimiter=","):
+    return list(read_csv(StringIO(string), has_header=has_header, delimiter=delimiter))
 
 
 @settings(use_coverage=False)
@@ -110,11 +110,11 @@ def test_csv_columns_seq(data):
         st.text(min_size=1, max_size=100, alphabet=string.ascii_lowercase + string.ascii_uppercase + string.digits),
         st.integers(), st.floats(min_value=1.2, max_value=100.12)]
 
-    csv_string = data.draw(csv(columns=columns, lines=20))
+    csv_string = data.draw(csv(columns=columns, lines=40))
     records = csv2records(csv_string, has_header=False)
     detected_types = detect_types(records)[1]
     types = list(map(lambda x: x["type"], detected_types["types"]))
-    assert len(records) == 20
+    assert len(records) == 40
     assert types == ["text", "int", "float"]
 
 
@@ -134,3 +134,25 @@ def test_csv_columns_and_header_seq(data):
 
     extracted_header = list(records[0].keys())
     assert extracted_header == header
+
+
+@settings(use_coverage=False)
+@given(data=st.data())
+def test_csv_dialect_tab(data):
+    header = ["abc", "cde"]
+    csv_string = data.draw(csv(header=header, lines=5, dialect="excel-tab"))
+    records = csv2records(csv_string, delimiter="\t")
+
+    extracted_header = list(records[0].keys())
+    assert extracted_header == header
+    assert len(records) == 5
+
+
+@settings(use_coverage=False)
+@given(data=st.data())
+def test_csv_dialect_none(data):
+    header = ["abc", "cde"]
+    csv_string = data.draw(csv(header=header, lines=5, dialect=None))
+    records = csv2records(csv_string)
+
+    assert len(records) == 5
