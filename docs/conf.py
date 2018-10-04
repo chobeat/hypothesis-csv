@@ -43,13 +43,13 @@ except FileNotFoundError:
 
 try:
     import sphinx
-    from distutils.version import LooseVersion
+    from pkg_resources import parse_version
 
     cmd_line_template = "sphinx-apidoc -f -o {outputdir} {moduledir}"
     cmd_line = cmd_line_template.format(outputdir=output_dir, moduledir=module_dir)
 
     args = cmd_line.split(" ")
-    if LooseVersion(sphinx.__version__) >= LooseVersion('1.7'):
+    if parse_version(sphinx.__version__) >= parse_version('1.7'):
         args = args[1:]
 
     apidoc.main(args)
@@ -140,7 +140,10 @@ html_theme = 'alabaster'
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-# html_theme_options = {}
+html_theme_options = {
+    'sidebar_width': '300px',
+    'page_width': '1200px'
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []

@@ -2,31 +2,23 @@
 # -*- coding: utf-8 -*-
 """
     Setup file for hypothesis_csv.
+    Use setup.cfg to configure your project.
 
-    This file was generated with PyScaffold 3.0.1.
+    This file was generated with PyScaffold 3.1.
     PyScaffold helps you to put up the scaffold of your new Python project.
-    Learn more under: http://pyscaffold.org/
+    Learn more under: https://pyscaffold.org/
 """
-
 import sys
+
+from pkg_resources import require, VersionConflict
 from setuptools import setup
 
-# Add here console scripts and other entry points in ini-style format
-entry_points = """
-[console_scripts]
-# script_name = hypothesis_csv.module:function
-# For example:
-# fibonacci = hypothesis_csv.skeleton:run
-"""
-
-
-def setup_package():
-    needs_sphinx = {'build_sphinx', 'upload_docs'}.intersection(sys.argv)
-    sphinx = ['sphinx'] if needs_sphinx else []
-    setup(setup_requires=['pyscaffold>=3.0a0,<3.1a0'] + sphinx,
-          entry_points=entry_points,
-          use_pyscaffold=True)
+try:
+    require('setuptools>=38.3')
+except VersionConflict:
+    print("Error: version of setuptools is too old (<38.3)!")
+    sys.exit(1)
 
 
 if __name__ == "__main__":
-    setup_package()
+    setup(use_pyscaffold=True)
