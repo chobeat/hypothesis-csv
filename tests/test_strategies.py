@@ -2,7 +2,7 @@ import string
 from io import StringIO
 
 import pytest
-from hypothesis import settings, given, HealthCheck
+from hypothesis import settings, given, HealthCheck, reproduce_failure
 from hypothesis import strategies as st
 from hypothesis.errors import InvalidArgument
 from meza.io import read_csv
