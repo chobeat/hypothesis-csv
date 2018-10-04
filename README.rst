@@ -3,7 +3,7 @@ hypothesis-csv
 ==============
 
 
-`hypothesis-csv` is an extension to the `hypothesis` framework. The goal of this framework is to offer a flexible tool
+:code:`hypothesis-csv` is an extension to the `hypothesis` framework. The goal of this framework is to offer a flexible tool
 to perform generative-testing/property-based testing for software that accepts CSV files as an input.
 
 
@@ -13,10 +13,10 @@ Description
 
 `hypothesis-csv` is designed with two main use cases in mind:
 
-* test software that accepts a wide spectrum of CSV formats and doesn't make assumptions on the content
+* test software that accepts a wide spectrum of CSV formats and doesn't make assumptions on the content (i.e. CSV parsers)
 * test software that accepts very specific CSV formats and makes assumption on the content, types and header fields.
 
-It provides two strategies `data_rows` and `csv` to pursue this goal, both contained in the `strategies` module.
+It provides two strategies, :code:`data_rows` and :code:`csv`, to pursue this goal, both contained in the `strategies` module.
 Please refer to their documentation and the examples for more details.
 
 Examples
