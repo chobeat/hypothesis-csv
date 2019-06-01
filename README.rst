@@ -89,7 +89,7 @@ Generate CSV with drawns dialects
 ---------------------------------
 
 .. code-block:: python
-    :name: Generate CSV in a given dialect
+    :name: Generate CSV with drawns dialects
 
     from hypothesis_csv.strategies import csv
     @given(csv=csv(columns=[text(),int(),float()], dialect=None))
