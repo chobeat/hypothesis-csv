@@ -98,24 +98,28 @@ def test_csv_header_int(data, kwargs):
 @given(data=st.data())
 def test_csv_columns_seq(data):
     columns = [
-        st.text(min_size=1, max_size=100, alphabet=string.ascii_lowercase + string.ascii_uppercase + string.digits),
-        st.integers(), st.floats(min_value=1.2, max_value=100.12)]
+        st.text(min_size=1, max_size=100, alphabet=string.ascii_lowercase + string.ascii_uppercase),
+        st.integers(),
+        st.floats(min_value=1.2, max_value=100.12),
+    ]
 
-    csv_string = data.draw(csv(columns=columns, lines=40))
+    csv_string = data.draw(csv(columns=columns, lines=100))
     records = csv2records(csv_string, has_header=False)
     detected_types = detect_types(records)[1]
     types = list(map(lambda x: x["type"], detected_types["types"]))
-    assert len(records) == 40
+    assert len(records) == 100
     assert types == ["text", "int", "float"]
 
 
 @given(data=st.data())
 def test_csv_columns_and_header_seq(data):
     columns = [
-        st.text(min_size=1, max_size=100, alphabet=string.ascii_lowercase + string.ascii_uppercase + string.digits),
-        st.integers(), st.floats(min_value=1.2, max_value=100.12)]
+        st.text(min_size=1, max_size=100, alphabet=string.ascii_lowercase + string.ascii_uppercase),
+        st.integers(),
+        st.floats(min_value=1.2, max_value=100.12),
+    ]
     header = ["x", "y", "z"]
-    csv_string = data.draw(csv(header=header, columns=columns, lines=10))
+    csv_string = data.draw(csv(header=header, columns=columns, lines=100))
     records = csv2records(csv_string)
     detected_types = detect_types(records)[1]
     types = list(map(lambda x: x["type"], detected_types["types"]))
