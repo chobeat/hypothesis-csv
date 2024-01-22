@@ -1,5 +1,6 @@
 import functools
 import string
+from collections.abc import Iterable
 
 from hypothesis.errors import InvalidArgument
 from hypothesis.strategies import composite, integers, sampled_from, floats, text
@@ -18,7 +19,7 @@ def get_columns(draw, columns):
 
 
 @overload
-def get_columns(draw, columns: isa(collections.Iterable)):
+def get_columns(draw, columns: isa(Iterable)):
     return columns
 
 
