@@ -1,9 +1,10 @@
-# -*- coding: utf-8 -*-
-from pkg_resources import get_distribution, DistributionNotFound
+"""Package version metadata for hypothesis-csv."""
+
+from importlib.metadata import PackageNotFoundError, version
+
 
 try:
-    # Change here if project is renamed and does not equal the package name
-    dist_name = 'hypothesis-csv'
-    __version__ = get_distribution(dist_name).version
-except DistributionNotFound:
-    __version__ = 'unknown'
+    dist_name = "hypothesis-csv"
+    __version__ = version(dist_name)
+except PackageNotFoundError:
+    __version__ = "unknown"

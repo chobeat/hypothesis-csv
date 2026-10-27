@@ -1,0 +1,36 @@
+[project]
+name = "hypothesis-csv"
+version = "0.3.4.post1"
+description = "CSV extension for the Hypothesis framework"
+readme = "README.rst"
+license = "Apache-2.0"
+authors = [
+    { name = "Simone Robutti", email = "simone.robutti@teraki.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "hypothesis",
+    "multimethod<2.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/chobeat/hypothesis-csv"
+
+[project.optional-dependencies]
+test = [
+    "meza",
+    "pytest",
+    "pytest-cov",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["tests*"]
